@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 class FeedForwardNN(nn.Module):
-    def __init__(self, input_size, hidden_layers_size_ls, output_size):
+    def __init__(self, input_size: int, hidden_layers_size_ls: list, output_size: int, dropout_rate: float):
         super(FeedForwardNN, self).__init__()
 
         layers = [] ## list which will contain all the layers of the model and would be passed on to sequential for final execution
@@ -11,6 +11,7 @@ class FeedForwardNN(nn.Module):
         ## define the input layer
         layers.append(nn.Linear(input_size, hidden_layers_size_ls[0]))
         layers.append(nn.ReLU)
+        layers.append(nn.Dropout(dropout_rate)) # adding a dropout to prevent overfitting
 
         ## define the hidden layers
         for i in range(1, len(hidden_layers_size_ls)):
@@ -33,9 +34,10 @@ hidden_layers_size_ls = [64, 32, 16]
 output_size = 5
 learning_rate = 0.01
 n_epochs = 10
+dropout_rate = 0.2
 
 ## define the model
-model = FeedForwardNN(input_size=input_size, hidden_layers_size_ls=hidden_layers_size_ls, output_size=output_size)
+model = FeedForwardNN(input_size=input_size, hidden_layers_size_ls=hidden_layers_size_ls, output_size=output_size, dropout_rate=dropout_rate)
 
 ## define the loss function and the optimizer - choosing adam for now
 criterion = nn.MSELoss()
