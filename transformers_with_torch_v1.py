@@ -173,4 +173,8 @@ def example_usage():
 # Test the model
 if __name__ == "__main__":
     output = example_usage()
+<<<<<<< HEAD
     print(f"Output shape: {output.shape}")
+=======
+    print(f"Output shape: {output.shape}")
+>>>>>>> a3e6c62 (changed code for transformer implementation with torch)

@@ -27,7 +27,7 @@ class NeuralNetworkwithNumpy():
 
         ## initialize the weights and biases
         self.weight_input_hidden = np.random.randn(self.input_size, self.hidden_size)
-        self.bias_hidden = np.zeros((1, self.hidden_ize))
+        self.bias_hidden = np.zeros((1, self.hidden_size))
         self.weight_hidden_output = np.random.randn(self.hidden_size, self.output_size)
         self.bias_output = np.zeros((1, self.output_size))
 
@@ -35,8 +35,8 @@ class NeuralNetworkwithNumpy():
         ## hidden = X * weight_input_hidden + bias_hidden
         ## output = X * weight_hidden_output + bias_output
         self.hidden = sigmoid(np.dot(X, self.weight_input_hidden) + self.bias_hidden)
-        self.output = sigmoid(np.dot(X, self.weight_hidden_output) + self.bias_output)
-        return self.output 
+        self.output = sigmoid(np.dot(self.hidden, self.weight_hidden_output) + self.bias_output)
+        return self.output
 
     def backward(self, X, y, output):
         ## --- propagating from output layer towards input ---
