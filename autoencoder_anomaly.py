@@ -40,7 +40,7 @@ def set_random_seed(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-def train_autoencoder(df, apply_pca=False, sigma_threshold=3, num_epochs=50, batch_size=32, seed=42):
+def train_autoencoder(df, sigma_threshold=3, num_epochs=50, batch_size=32, seed=42):
     # Set the random seed for reproducibility
     set_random_seed(seed)
     
