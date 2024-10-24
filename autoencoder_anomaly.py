@@ -111,3 +111,7 @@ def train_autoencoder(df, sigma_threshold=3, num_epochs=50, batch_size=32, seed=
     df_reconstructed['study_site_subject_id'] = df['study_site_subject_id'].values
     
     return df, df_feature_errors, df_reconstructed
+
+
+processed_features = np.random.randn(100, 50)
+ae_res_df, error_features, df_reconstructed = train_autoencoder(processed_features)
