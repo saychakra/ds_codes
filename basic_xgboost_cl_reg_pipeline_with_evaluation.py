@@ -1,7 +1,10 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split, cross_val_score, cross_validate
-from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, mean_squared_error, mean_absolute_error, r2_score, make_scorer)
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, mean_squared_error, 
+    mean_absolute_error, r2_score, make_scorer
+)
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -94,3 +97,16 @@ def run_xgboost_pipeline(
     }).sort_values(by='importance', ascending=False)
 
     return pipeline, feature_importance_df
+
+## sample usage
+df = pd.read_csv("your_data.csv")
+
+pipeline, feat_imp = run_xgboost_pipeline(
+    df=df,
+    target_col='target',
+    task_type='classification',  # or 'regression'
+    cv=5
+)
+
+## print the top 10 important features
+print(feat_imp.head(10))
