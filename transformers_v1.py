@@ -1,6 +1,8 @@
+import math
+
 import torch
 import torch.nn as nn
-import math
+
 
 class InputEmbedding():
     def __init__(self, d_model: int, vocab_size: int) -> None:
@@ -11,7 +13,7 @@ class InputEmbedding():
 
     def forward(self, x):
         return self.embeddings(x) * math.sqrt(self.d_model)
-    
+
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model: int, seq_len: int, dropout):
         super().__init__()
@@ -37,11 +39,11 @@ class PositionalEncoding(nn.Module):
 
         ## register on buffer
         self.register('pe', pe)
-    
+
     def forward(self, x):
         x = x + (self.pe[:, x.shape[1], :]).requires_grad_(False) # because we don't want the model to learn the positional encoding and it will always be constant
         return self.dropout(x)
-    
+
 
 class LayerNormalization(nn.Module):
     def __init__(self, eps: float = 10e-6) -> None:
@@ -54,7 +56,7 @@ class LayerNormalization(nn.Module):
         std = x.std(dim = -1, keepdim=True)
 
         return self.alpha * (x - mean) / (std + self.eps) + self.bias
-    
+
 class FeedForwardBlock(nn.Module):
     def __init__(self, d_model: int, d_ff: int, dropout: float):
         super().__init__()
@@ -64,13 +66,13 @@ class FeedForwardBlock(nn.Module):
 
     def forward(self, x):
         return self.linear_2(self.dropout(torch.relu(self.linear_1(x))))
-    
+
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model: int, h: int, dropout: float):
         self.d_model = d_model
         self.h = h
         self.dropout = nn.Dropout(dropout)
-        
+
         ## the tensors should be properly divisible. hence running an assertion check
         assert self.d_model % self.h == 0, "Embeddings not properly divisible by the head!"
 
@@ -91,4 +93,4 @@ class MultiHeadAttention(nn.Module):
         key = key.view(key.shape[0], key.shape[1], self.h, self.d_k).transpose(1, 2)
         value = value.view(value.shape[0], value.shape[1], self.h, self.d_k).transpose(1, 2)
 
-        
+
