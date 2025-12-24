@@ -4,9 +4,10 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.datasets as datasets
-from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
+
 
 ########################################################## Discriminator ##########################################################
 class Discriminator(nn.Module):
@@ -90,9 +91,9 @@ opt_gen = optim.Adam(gen.parameters(), lr=lr)
 criterion = nn.BCELoss()
 
 # tensorboard
-writer_fake = SummaryWriter(f"runs/GAN_MNIST/fake")
-writer_real = SummaryWriter(f"runs/GAN_MNIST/real")
-writer_loss = SummaryWriter(f"runs/GAN_MNIST/loss")
+writer_fake = SummaryWriter("runs/GAN_MNIST/fake")
+writer_real = SummaryWriter("runs/GAN_MNIST/real")
+writer_loss = SummaryWriter("runs/GAN_MNIST/loss")
 step = 0
 
 # training loop

@@ -1,5 +1,7 @@
-import numpy as np
 from collections import Counter
+
+import numpy as np
+
 
 class DecisionTree:
     def __init__(self, max_depth=None, min_samples_split=2, n_features=None):
@@ -40,7 +42,7 @@ class DecisionTree:
 
         # Find the best split
         best_feature, best_threshold = self._best_split(X, y, feat_idxs)
-        
+
         if best_feature is None:  # No valid split found
             leaf_value = self._most_common_label(y)
             return self.Node(value=leaf_value)
@@ -64,13 +66,13 @@ class DecisionTree:
         # Try each feature
         for feature in feat_idxs:
             thresholds = np.unique(X[:, feature])
-            
+
             # Try each threshold
             for threshold in thresholds:
                 # Split the data
                 left_mask = X[:, feature] < threshold
                 right_mask = ~left_mask
-                
+
                 if len(y[left_mask]) == 0 or len(y[right_mask]) == 0:
                     continue
 
@@ -125,7 +127,7 @@ class RandomForest:
             idxs = np.random.choice(len(X), size=len(X), replace=True)
             bootstrap_X = X[idxs]
             bootstrap_y = y[idxs]
-            
+
             # Create and train tree
             tree = DecisionTree(
                 max_depth=self.max_depth,
@@ -139,7 +141,7 @@ class RandomForest:
         # Get predictions from all trees
         tree_predictions = np.array([tree.predict(X) for tree in self.trees])
         # Return majority vote for each sample
-        return np.array([Counter(predictions).most_common(1)[0][0] 
+        return np.array([Counter(predictions).most_common(1)[0][0]
                         for predictions in tree_predictions.T])
 
 # Example usage
@@ -155,7 +157,7 @@ def example_usage():
 
     # Make predictions
     y_pred = rf.predict(X)
-    
+
     # Calculate accuracy
     accuracy = np.mean(y_pred == y)
     print(f"Accuracy: {accuracy:.2f}")

@@ -1,0 +1,18 @@
+line-length = 100
+target-version = "py39"
+
+select = ["E", "F", "W", "I", "B"]
+ignore = [
+  "E501",  # line length
+]
+
+exclude = [
+  ".git",
+  ".venv",
+  "venv",
+  "__pycache__",
+]
+
+# notebooks are linted but never block you
+[lint.per-file-ignores]
+"**/*.ipynb" = ["E", "F", "W", "I", "B"]
