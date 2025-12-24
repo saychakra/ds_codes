@@ -57,8 +57,11 @@ if __name__ == "__main__":
         loss.backward()
         optimizer.step()
 
-        if (epoch + 1) % 10 == 0:
-            print(f"Epoch [{epoch+1}/{n_epochs}], loss: {loss.item():.4f}")
+        # print progress each epoch with a simple progress bar
+        bar_len = 30
+        filled_len = int(bar_len * (epoch + 1) / n_epochs)
+        bar = '=' * filled_len + '-' * (bar_len - filled_len)
+        print(f"Epoch [{epoch+1}/{n_epochs}] [{bar}] loss: {loss.item():.4f}", flush=True)
 
     model.eval()
     with torch.no_grad():

@@ -46,12 +46,22 @@ def lstm_forecast(data, exog_features, look_back, forecast_horizon):
     model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2, verbose=1)
 
     # Make predictions
-    train_predict = model.predict(X_train)
-    test_predict = model.predict(X_test)
+    train_predict = model.predict(X_train, verbose=0)
+    test_predict = model.predict(X_test, verbose=0)
 
     # Inverse transform predictions
-    train_predict = scaler.inverse_transform(np.column_stack((train_predict, np.zeros((train_predict.shape[0], combined_data.shape[1]-1))))[:, 0])
-    test_predict = scaler.inverse_transform(np.column_stack((test_predict, np.zeros((test_predict.shape[0], combined_data.shape[1]-1))))[:, 0])
+    # train_predict and test_predict have shape (n_samples, forecast_horizon)
+    # We take only the first forecast step and reshape properly
+    train_predict_flat = train_predict[:, 0]  # Take only first forecast step
+    test_predict_flat = test_predict[:, 0]  # Take only first forecast step
+
+    train_predict_reshaped = np.zeros((len(train_predict_flat), combined_data.shape[1]))
+    train_predict_reshaped[:, 0] = train_predict_flat
+    train_predict = scaler.inverse_transform(train_predict_reshaped)[:, 0]
+
+    test_predict_reshaped = np.zeros((len(test_predict_flat), combined_data.shape[1]))
+    test_predict_reshaped[:, 0] = test_predict_flat
+    test_predict = scaler.inverse_transform(test_predict_reshaped)[:, 0]
 
     return train_predict, test_predict
 
