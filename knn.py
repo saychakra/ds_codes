@@ -64,7 +64,7 @@ class KMeansClustering:
         Returns:
         array: Cluster labels for each point
         """
-        distances = np.sqrt(((X - self.centroids[:, np.newaxis])**2).sum(axis=2))
+        distances = np.sqrt(((X - self.centroids[:, np.newaxis]) ** 2).sum(axis=2))
         return np.argmin(distances, axis=0)
 
     def _update_centroids(self, X):
@@ -101,7 +101,7 @@ class KMeansClustering:
         Returns:
         float: Inertia value
         """
-        distances = np.sqrt(((X - self.centroids[self.labels])**2).sum(axis=1))
+        distances = np.sqrt(((X - self.centroids[self.labels]) ** 2).sum(axis=1))
         return np.sum(distances**2)
 
     def predict(self, X):
@@ -128,10 +128,16 @@ class KMeansClustering:
             raise ValueError("Plotting is only supported for 2D data")
 
         plt.figure(figsize=(8, 6))
-        plt.scatter(X[:, 0], X[:, 1], c=self.labels, cmap='viridis')
-        plt.scatter(self.centroids[:, 0], self.centroids[:, 1],
-                   c='red', marker='x', s=200, linewidths=3,
-                   label='Centroids')
+        plt.scatter(X[:, 0], X[:, 1], c=self.labels, cmap="viridis")
+        plt.scatter(
+            self.centroids[:, 0],
+            self.centroids[:, 1],
+            c="red",
+            marker="x",
+            s=200,
+            linewidths=3,
+            label="Centroids",
+        )
         plt.title(title)
         plt.legend()
         plt.show()

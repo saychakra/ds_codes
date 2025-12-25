@@ -20,10 +20,11 @@ class PositionalEncoding(nn.Module):
         pe[:, 1::2] = torch.cos(position * div_term)
 
         pe = pe.unsqueeze(0)
-        self.register_buffer('pe', pe)
+        self.register_buffer("pe", pe)
 
     def forward(self, x):
-        return x + self.pe[:, :x.size(1)]
+        return x + self.pe[:, : x.size(1)]
+
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, num_heads):
@@ -71,6 +72,7 @@ class MultiHeadAttention(nn.Module):
 
         return self.W_o(x)
 
+
 class FeedForward(nn.Module):
     def __init__(self, d_model, d_ff):
         super().__init__()
@@ -80,6 +82,7 @@ class FeedForward(nn.Module):
 
     def forward(self, x):
         return self.linear2(self.relu(self.linear1(x)))
+
 
 class EncoderLayer(nn.Module):
     def __init__(self, d_model, num_heads, d_ff, dropout):
@@ -100,6 +103,7 @@ class EncoderLayer(nn.Module):
         x = self.norm2(x + self.dropout(ff_output))
 
         return x
+
 
 class DecoderLayer(nn.Module):
     def __init__(self, d_model, num_heads, d_ff, dropout):
@@ -127,31 +131,32 @@ class DecoderLayer(nn.Module):
 
         return x
 
+
 class Transformer(nn.Module):
-    def __init__(self,
-                 src_vocab_size,
-                 tgt_vocab_size,
-                 d_model=512,
-                 num_heads=8,
-                 num_layers=6,
-                 d_ff=2048,
-                 max_seq_length=5000,
-                 dropout=0.1):
+    def __init__(
+        self,
+        src_vocab_size,
+        tgt_vocab_size,
+        d_model=512,
+        num_heads=8,
+        num_layers=6,
+        d_ff=2048,
+        max_seq_length=5000,
+        dropout=0.1,
+    ):
         super().__init__()
 
         self.encoder_embedding = nn.Embedding(src_vocab_size, d_model)
         self.decoder_embedding = nn.Embedding(tgt_vocab_size, d_model)
         self.positional_encoding = PositionalEncoding(d_model, max_seq_length)
 
-        self.encoder_layers = nn.ModuleList([
-            EncoderLayer(d_model, num_heads, d_ff, dropout)
-            for _ in range(num_layers)
-        ])
+        self.encoder_layers = nn.ModuleList(
+            [EncoderLayer(d_model, num_heads, d_ff, dropout) for _ in range(num_layers)]
+        )
 
-        self.decoder_layers = nn.ModuleList([
-            DecoderLayer(d_model, num_heads, d_ff, dropout)
-            for _ in range(num_layers)
-        ])
+        self.decoder_layers = nn.ModuleList(
+            [DecoderLayer(d_model, num_heads, d_ff, dropout) for _ in range(num_layers)]
+        )
 
         self.fc = nn.Linear(d_model, tgt_vocab_size)
         self.dropout = nn.Dropout(dropout)
@@ -170,16 +175,14 @@ class Transformer(nn.Module):
         src_mask, tgt_mask = self.generate_mask(src, tgt)
 
         # Encoder
-        src_embedded = self.dropout(self.positional_encoding(
-            self.encoder_embedding(src)))
+        src_embedded = self.dropout(self.positional_encoding(self.encoder_embedding(src)))
         enc_output = src_embedded
 
         for enc_layer in self.encoder_layers:
             enc_output = enc_layer(enc_output, src_mask)
 
         # Decoder
-        tgt_embedded = self.dropout(self.positional_encoding(
-            self.decoder_embedding(tgt)))
+        tgt_embedded = self.dropout(self.positional_encoding(self.decoder_embedding(tgt)))
         dec_output = tgt_embedded
 
         for dec_layer in self.decoder_layers:
@@ -187,6 +190,7 @@ class Transformer(nn.Module):
 
         output = self.fc(dec_output)
         return output
+
 
 # Example usage
 def create_transformer(src_vocab_size=1000, tgt_vocab_size=1000):
@@ -198,9 +202,10 @@ def create_transformer(src_vocab_size=1000, tgt_vocab_size=1000):
         num_layers=6,
         d_ff=2048,
         max_seq_length=5000,
-        dropout=0.1
+        dropout=0.1,
     )
     return model
+
 
 # Create model
 src_vocab_size = 1000  # Size of source vocabulary

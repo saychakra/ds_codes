@@ -46,9 +46,10 @@ class LogisticRegression:
         linear_model = np.dot(X, self.weights) + self.bias
         return self.sigmoid(linear_model)
 
+
 # Generate sample data
-X = np.random.randn(100, 2)    # 100 samples, 2 features
-y = np.random.randint(0, 2, 100)   # 100 binary labels
+X = np.random.randn(100, 2)  # 100 samples, 2 features
+y = np.random.randint(0, 2, 100)  # 100 binary labels
 
 # Use the model
 model = LogisticRegression(learning_rate=0.01, num_iterations=1000)

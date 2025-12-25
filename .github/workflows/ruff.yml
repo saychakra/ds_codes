@@ -16,10 +16,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.12"
 
       - name: Install Ruff
         run: pip install ruff
 
-      - name: Run Ruff
+      - name: Run Ruff Lint Check
         run: ruff check .
+
+      - name: Run Ruff Format Check
+        run: ruff format --check .

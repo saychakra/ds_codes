@@ -22,7 +22,7 @@ class SVM:
         # Compute hinge loss
         hinge_loss = np.maximum(0, 1 - y * distance)
         # Add L2 regularization term
-        return np.mean(hinge_loss) + self.lambda_param * np.sum(self.weights ** 2)
+        return np.mean(hinge_loss) + self.lambda_param * np.sum(self.weights**2)
 
     def fit(self, X, y):
         """
@@ -86,6 +86,7 @@ class SVM:
         """
         predictions = self.predict(X)
         return np.mean(predictions == y)
+
 
 # Example usage
 if __name__ == "__main__":

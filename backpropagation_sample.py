@@ -18,9 +18,10 @@ def sigmoid(x):
 
 
 def sigmoid_derivative(x):
-    return (x * (1-x))
+    return x * (1 - x)
 
-class NeuralNetworkwithNumpy():
+
+class NeuralNetworkwithNumpy:
     def __init__(self, input_size, hidden_size, output_size):
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -56,7 +57,6 @@ class NeuralNetworkwithNumpy():
 
         self.weight_input_hidden += np.dot(X.T, self.hidden_delta)
         self.bias_hidden += np.sum(self.hidden_delta, axis=0, keepdims=True)
-
 
     def train(self, X, y, epochs, learning_rate):
         for _ in range(epochs):

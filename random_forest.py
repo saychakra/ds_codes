@@ -31,9 +31,11 @@ class DecisionTree:
         n_labels = len(np.unique(y))
 
         # Stopping criteria
-        if (self.max_depth is not None and depth >= self.max_depth) or \
-           n_samples < self.min_samples_split or \
-           n_labels == 1:
+        if (
+            (self.max_depth is not None and depth >= self.max_depth)
+            or n_samples < self.min_samples_split
+            or n_labels == 1
+        ):
             leaf_value = self._most_common_label(y)
             return self.Node(value=leaf_value)
 
@@ -82,7 +84,7 @@ class DecisionTree:
                 n = len(y)
                 n_l = sum(left_mask)
                 n_r = sum(right_mask)
-                gain = current_entropy - (n_l/n * left_entropy + n_r/n * right_entropy)
+                gain = current_entropy - (n_l / n * left_entropy + n_r / n * right_entropy)
 
                 if gain > best_gain:
                     best_gain = gain
@@ -112,6 +114,7 @@ class DecisionTree:
             return self._traverse_tree(x, node.left)
         return self._traverse_tree(x, node.right)
 
+
 class RandomForest:
     def __init__(self, n_trees=100, max_depth=None, min_samples_split=2, n_features=None):
         self.n_trees = n_trees
@@ -132,7 +135,7 @@ class RandomForest:
             tree = DecisionTree(
                 max_depth=self.max_depth,
                 min_samples_split=self.min_samples_split,
-                n_features=self.n_features
+                n_features=self.n_features,
             )
             tree.fit(bootstrap_X, bootstrap_y)
             self.trees.append(tree)
@@ -141,8 +144,10 @@ class RandomForest:
         # Get predictions from all trees
         tree_predictions = np.array([tree.predict(X) for tree in self.trees])
         # Return majority vote for each sample
-        return np.array([Counter(predictions).most_common(1)[0][0]
-                        for predictions in tree_predictions.T])
+        return np.array(
+            [Counter(predictions).most_common(1)[0][0] for predictions in tree_predictions.T]
+        )
+
 
 # Example usage
 def example_usage():
@@ -161,6 +166,7 @@ def example_usage():
     # Calculate accuracy
     accuracy = np.mean(y_pred == y)
     print(f"Accuracy: {accuracy:.2f}")
+
 
 if __name__ == "__main__":
     example_usage()
