@@ -12,14 +12,12 @@ from utils.code_loader import (
 )
 
 st.set_page_config(
-    page_title="DS Code Playground",
-    page_icon="🧪",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_title="DS Code Playground", page_icon="🧪", layout="wide", initial_sidebar_state="expanded"
 )
 
 # Custom CSS for better styling
-st.markdown("""
+st.markdown(
+    """
 <style>
     .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
         font-size: 1rem;
@@ -30,15 +28,17 @@ st.markdown("""
         padding: 1rem;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 st.title("🧪 DS Code Playground")
 st.markdown("_Interactive exploration, understanding, and execution of your ML/DS codes_")
 
 # Initialize session state
-if 'selected_file' not in st.session_state:
+if "selected_file" not in st.session_state:
     st.session_state.selected_file = None
-if 'code_structure' not in st.session_state:
+if "code_structure" not in st.session_state:
     st.session_state.code_structure = get_code_structure()
 
 # Sidebar navigation
@@ -54,8 +54,8 @@ with st.sidebar:
     selected = st.selectbox(
         "Select a file to explore:",
         file_names,
-        key='file_selector',
-        help="Choose a Python script or Jupyter notebook"
+        key="file_selector",
+        help="Choose a Python script or Jupyter notebook",
     )
 
     if selected:
@@ -65,8 +65,8 @@ with st.sidebar:
 
     # Statistics
     st.subheader("📊 Workspace Stats")
-    total_py = len([f for f in all_files if f[0].endswith('.py')])
-    total_nb = len([f for f in all_files if f[0].endswith('.ipynb')])
+    total_py = len([f for f in all_files if f[0].endswith(".py")])
+    total_nb = len([f for f in all_files if f[0].endswith(".ipynb")])
     col1, col2 = st.columns(2)
     col1.metric("Python Files", total_py)
     col2.metric("Notebooks", total_nb)
@@ -74,8 +74,8 @@ with st.sidebar:
 # Main content area
 if st.session_state.selected_file:
     file_info = st.session_state.selected_file
-    file_path = file_info['path']
-    file_name = file_info['name']
+    file_path = file_info["path"]
+    file_name = file_info["name"]
 
     # Header with file info
     col1, col2 = st.columns([3, 1])
@@ -91,12 +91,12 @@ if st.session_state.selected_file:
         st.subheader("File Information")
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("File Type", file_info['type'])
+            st.metric("File Type", file_info["type"])
         with col2:
-            st.metric("Path", file_path.split('/')[-1])
+            st.metric("Path", file_path.split("/")[-1])
 
         # Show docstring summary if available
-        if file_info['type'] == 'script':
+        if file_info["type"] == "script":
             content = read_file_content(file_path)
             docstring = get_summary_from_docstring(content)
             if docstring:
@@ -106,8 +106,10 @@ if st.session_state.selected_file:
         st.subheader("Source Code")
         content = read_file_content(file_path)
 
-        if file_info['type'] == 'notebook':
-            st.info("📓 Notebook files cannot be directly edited here. View in Jupyter or convert to Python.")
+        if file_info["type"] == "notebook":
+            st.info(
+                "📓 Notebook files cannot be directly edited here. View in Jupyter or convert to Python."
+            )
             with st.expander("Show raw notebook JSON"):
                 st.code(content[:1000] + "...", language="json")
         else:
@@ -116,16 +118,13 @@ if st.session_state.selected_file:
 
             # Download button
             st.download_button(
-                label="⬇️ Download Code",
-                data=content,
-                file_name=file_name,
-                mime="text/plain"
+                label="⬇️ Download Code", data=content, file_name=file_name, mime="text/plain"
             )
 
     with tab3:
         st.subheader("🎮 Interactive Playground")
 
-        if file_info['type'] == 'notebook':
+        if file_info["type"] == "notebook":
             st.warning("⚠️ Notebook execution support coming soon!")
         else:
             st.info("✨ Execute code and experiment with parameters")
@@ -136,7 +135,11 @@ if st.session_state.selected_file:
                 content = read_file_content(file_path)
 
                 # Extract imports
-                imports = [line for line in content.split('\n') if line.strip().startswith('import ') or line.strip().startswith('from ')][:10]
+                imports = [
+                    line
+                    for line in content.split("\n")
+                    if line.strip().startswith("import ") or line.strip().startswith("from ")
+                ][:10]
                 if imports:
                     st.caption("Imports:")
                     for imp in imports:
@@ -174,8 +177,8 @@ if st.session_state.selected_file:
 
                     # Setup execution environment
                     execution_namespace = {
-                        '__name__': '__main__',
-                        '__file__': file_path,
+                        "__name__": "__main__",
+                        "__file__": file_path,
                     }
 
                     # Capture output if enabled
@@ -187,7 +190,7 @@ if st.session_state.selected_file:
 
                     # Handle warnings
                     if not show_warnings:
-                        warnings.filterwarnings('ignore')
+                        warnings.filterwarnings("ignore")
 
                     # Execute code
                     exec(content, execution_namespace)
@@ -217,6 +220,7 @@ if st.session_state.selected_file:
 
                     # Show traceback
                     import traceback
+
                     with st.expander("📋 Full Traceback"):
                         st.code(traceback.format_exc())
 
@@ -231,7 +235,7 @@ if st.session_state.selected_file:
             No description file found for this code.
 
             To add a description, create a markdown file at:
-            `playground/descriptions/{file_name.replace('.py', '.md').replace('.ipynb', '.md')}`
+            `playground/descriptions/{file_name.replace(".py", ".md").replace(".ipynb", ".md")}`
             """)
 
             # Template
