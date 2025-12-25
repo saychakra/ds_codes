@@ -2,3 +2,7 @@ check.ipynb
 .ipynb_checkpoints/
 runs/
 dataset/
+*.pyc
+*.cpython
+__pycache__/
+**/__pycache__/
