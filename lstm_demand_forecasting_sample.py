@@ -10,19 +10,23 @@ from tensorflow.keras.optimizers import Adam
 def prepare_data(data, look_back, forecast_horizon, features):
     X, y = [], []
     for i in range(len(data) - look_back - forecast_horizon + 1):
-        X.append(data[i:(i + look_back), :])
-        y.append(data[i + look_back:i + look_back + forecast_horizon, 0])
+        X.append(data[i : (i + look_back), :])
+        y.append(data[i + look_back : i + look_back + forecast_horizon, 0])
     return np.array(X), np.array(y)
+
 
 # 2. Create and compile the LSTM model
 def create_model(input_shape, output_shape):
-    model = Sequential([
-        LSTM(50, activation='relu', input_shape=input_shape, return_sequences=True),
-        LSTM(50, activation='relu'),
-        Dense(output_shape)
-    ])
-    model.compile(optimizer=Adam(learning_rate=0.001), loss='mse')
+    model = Sequential(
+        [
+            LSTM(50, activation="relu", input_shape=input_shape, return_sequences=True),
+            LSTM(50, activation="relu"),
+            Dense(output_shape),
+        ]
+    )
+    model.compile(optimizer=Adam(learning_rate=0.001), loss="mse")
     return model
+
 
 # 3. Main function
 def lstm_forecast(data, exog_features, look_back, forecast_horizon):
@@ -65,20 +69,25 @@ def lstm_forecast(data, exog_features, look_back, forecast_horizon):
 
     return train_predict, test_predict
 
+
 # Example usage
 if __name__ == "__main__":
     # Generate sample data
     np.random.seed(42)
-    dates = pd.date_range(start='2020-01-01', end='2022-12-31', freq='D')
+    dates = pd.date_range(start="2020-01-01", end="2022-12-31", freq="D")
     demand = np.random.randint(50, 200, size=len(dates))
     temperature = np.random.uniform(10, 30, size=len(dates))
     is_weekend = (dates.dayofweek >= 5).astype(int)
 
-    data = pd.DataFrame({'demand': demand}, index=dates)
-    exog_features = pd.DataFrame({'temperature': temperature, 'is_weekend': is_weekend}, index=dates)
+    data = pd.DataFrame({"demand": demand}, index=dates)
+    exog_features = pd.DataFrame(
+        {"temperature": temperature, "is_weekend": is_weekend}, index=dates
+    )
 
     # Run the LSTM forecast
-    train_predict, test_predict = lstm_forecast(data, exog_features, look_back=30, forecast_horizon=7)
+    train_predict, test_predict = lstm_forecast(
+        data, exog_features, look_back=30, forecast_horizon=7
+    )
 
     print("Training set predictions shape:", train_predict.shape)
     print("Test set predictions shape:", test_predict.shape)

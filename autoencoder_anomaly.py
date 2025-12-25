@@ -17,7 +17,7 @@ class Autoencoder(nn.Module):
             nn.Linear(32, 16),
             nn.ReLU(),
             nn.Linear(16, 8),
-            nn.ReLU()
+            nn.ReLU(),
         )
         self.decoder = nn.Sequential(
             nn.Linear(8, 16),
@@ -25,13 +25,14 @@ class Autoencoder(nn.Module):
             nn.Linear(16, 32),
             nn.ReLU(),
             nn.Linear(32, input_dim),
-            nn.Sigmoid()
+            nn.Sigmoid(),
         )
 
     def forward(self, x):
         encoded = self.encoder(x)
         decoded = self.decoder(encoded)
         return decoded
+
 
 def set_random_seed(seed):
     np.random.seed(seed)
@@ -40,12 +41,13 @@ def set_random_seed(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
+
 def train_autoencoder(df, sigma_threshold=3, num_epochs=50, batch_size=32, seed=42):
     # Set the random seed for reproducibility
     set_random_seed(seed)
 
     # Preprocess the data and scale the features
-    features = df.drop(columns=['study_site_subject_id'])
+    features = df.drop(columns=["study_site_subject_id"])
     scaler = MinMaxScaler()
     processed_features = scaler.fit_transform(features)
 
@@ -75,14 +77,14 @@ def train_autoencoder(df, sigma_threshold=3, num_epochs=50, batch_size=32, seed=
 
         avg_loss = epoch_loss / len(dataloader)
         losses.append(avg_loss)
-        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}')
+        print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {avg_loss:.4f}")
 
     # Plotting the training loss
     plt.figure(figsize=(10, 5))
-    plt.plot(range(num_epochs), losses, label='Training Loss')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
-    plt.title('Autoencoder Training Loss')
+    plt.plot(range(num_epochs), losses, label="Training Loss")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.title("Autoencoder Training Loss")
     plt.legend()
     plt.show()
 
@@ -96,19 +98,19 @@ def train_autoencoder(df, sigma_threshold=3, num_epochs=50, batch_size=32, seed=
     # Calculate reconstruction error for each feature
     feature_reconstruction_error = np.square(processed_features - reconstructed_data)
     df_feature_errors = pd.DataFrame(feature_reconstruction_error, columns=features.columns)
-    df_feature_errors['study_site_subject_id'] = df['study_site_subject_id'].values
+    df_feature_errors["study_site_subject_id"] = df["study_site_subject_id"].values
 
     # Calculate mean reconstruction error for each row
     reconstruction_error = np.mean(feature_reconstruction_error, axis=1)
     threshold = np.mean(reconstruction_error) + sigma_threshold * np.std(reconstruction_error)
 
     # Identifying anomalies
-    df['reconstruction_error'] = reconstruction_error
-    df['anomaly_flag'] = reconstruction_error > threshold
+    df["reconstruction_error"] = reconstruction_error
+    df["anomaly_flag"] = reconstruction_error > threshold
 
     # Create DataFrame for reconstructed values in original scale
     df_reconstructed = pd.DataFrame(reconstructed_data_original_scale, columns=features.columns)
-    df_reconstructed['study_site_subject_id'] = df['study_site_subject_id'].values
+    df_reconstructed["study_site_subject_id"] = df["study_site_subject_id"].values
 
     return df, df_feature_errors, df_reconstructed
 
@@ -116,7 +118,9 @@ def train_autoencoder(df, sigma_threshold=3, num_epochs=50, batch_size=32, seed=
 if __name__ == "__main__":
     # Example run with synthetic data
     processed_features = np.random.randn(100, 50)
-    df_example = pd.DataFrame(processed_features, columns=[f"feat_{i}" for i in range(processed_features.shape[1])])
-    df_example['study_site_subject_id'] = range(len(df_example))
+    df_example = pd.DataFrame(
+        processed_features, columns=[f"feat_{i}" for i in range(processed_features.shape[1])]
+    )
+    df_example["study_site_subject_id"] = range(len(df_example))
 
     ae_res_df, error_features, df_reconstructed = train_autoencoder(df_example)

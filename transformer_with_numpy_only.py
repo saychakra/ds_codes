@@ -13,6 +13,7 @@ class LayerNormalization:
         normalized = (x - mean) / np.sqrt(variance + self.eps)
         return normalized * self.gamma + self.beta
 
+
 class PositionalEncoding:
     def __init__(self, d_model, max_seq_length=5000):
         self.d_model = d_model
@@ -30,7 +31,8 @@ class PositionalEncoding:
         self.pe = pe[np.newaxis, :, :]  # Add batch dimension
 
     def forward(self, x):
-        return x + self.pe[:, :x.shape[1]]
+        return x + self.pe[:, : x.shape[1]]
+
 
 class MultiHeadAttention:
     def __init__(self, d_model, num_heads):
@@ -72,7 +74,8 @@ class MultiHeadAttention:
 
         # Combine heads
         attention_output = attention_output.transpose(0, 2, 1, 3).reshape(
-            batch_size, -1, self.d_model)
+            batch_size, -1, self.d_model
+        )
 
         # Final linear projection
         output = np.dot(attention_output, self.W_o)
@@ -82,6 +85,7 @@ class MultiHeadAttention:
     def _softmax(self, x):
         exp_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
         return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
+
 
 class FeedForward:
     def __init__(self, d_model, d_ff):
@@ -103,6 +107,7 @@ class FeedForward:
         output = np.dot(hidden, self.W2) + self.b2
         return output
 
+
 class EncoderLayer:
     def __init__(self, d_model, num_heads, d_ff):
         self.self_attention = MultiHeadAttention(d_model, num_heads)
@@ -123,6 +128,7 @@ class EncoderLayer:
 
         return x
 
+
 class DecoderLayer:
     def __init__(self, d_model, num_heads, d_ff):
         self.self_attention = MultiHeadAttention(d_model, num_heads)
@@ -140,7 +146,8 @@ class DecoderLayer:
 
         # Cross attention
         cross_attention_output, _ = self.cross_attention.forward(
-            x, encoder_output, encoder_output, src_mask)
+            x, encoder_output, encoder_output, src_mask
+        )
         x = x + cross_attention_output
         x = self.norm2.forward(x)
 
@@ -151,20 +158,15 @@ class DecoderLayer:
 
         return x
 
+
 class Transformer:
     def __init__(self, d_model=512, num_heads=8, num_layers=6, d_ff=2048):
         self.d_model = d_model
         self.positional_encoding = PositionalEncoding(d_model)
 
         # Create encoder and decoder layers
-        self.encoder_layers = [
-            EncoderLayer(d_model, num_heads, d_ff)
-            for _ in range(num_layers)
-        ]
-        self.decoder_layers = [
-            DecoderLayer(d_model, num_heads, d_ff)
-            for _ in range(num_layers)
-        ]
+        self.encoder_layers = [EncoderLayer(d_model, num_heads, d_ff) for _ in range(num_layers)]
+        self.decoder_layers = [DecoderLayer(d_model, num_heads, d_ff) for _ in range(num_layers)]
 
     def encode(self, src, src_mask=None):
         x = self.positional_encoding.forward(src)
@@ -187,9 +189,11 @@ class Transformer:
         decoder_output = self.decode(tgt, encoder_output, src_mask, tgt_mask)
         return decoder_output
 
+
 # Helper function to create masks
 def create_padding_mask(seq):
     return (seq != 0).astype(np.float32)[:, np.newaxis, np.newaxis, :]
+
 
 def create_look_ahead_mask(size):
     mask = np.triu(np.ones((size, size)), k=1)

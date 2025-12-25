@@ -28,6 +28,7 @@ class Discriminator(nn.Module):
     def forward(self, x):
         return self.disc(x)
 
+
 ############################################################ Generator ############################################################
 class Generator(nn.Module):
     def __init__(self, z_dim, img_dim):
@@ -49,6 +50,7 @@ class Generator(nn.Module):
     def forward(self, x):
         return self.gen(x)
 
+
 ########################################################### Weight Initialization #################################################
 def initialize_weights(model):
     for m in model.modules():
@@ -56,6 +58,7 @@ def initialize_weights(model):
             nn.init.xavier_uniform_(m.weight)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
+
 
 ############################################################ Hyperparameters ######################################################
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -76,10 +79,7 @@ initialize_weights(gen)
 fixed_noise = torch.randn((batch_size, z_dim)).to(device)
 
 # transforms
-transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.5,), (0.5,))
-])
+transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
 
 # data loading
 dataset = datasets.MNIST(root="dataset/", transform=transform, download=True)
@@ -124,10 +124,7 @@ for epoch in range(num_epochs):
 
         # TensorBoard logging
         if batch_idx == 0:
-            print(
-                f"Epoch [{epoch}/{num_epochs}] "
-                f"Loss D: {lossD:.4f}, Loss G: {lossG:.4f}"
-            )
+            print(f"Epoch [{epoch}/{num_epochs}] Loss D: {lossD:.4f}, Loss G: {lossG:.4f}")
 
             with torch.no_grad():
                 fake = gen(fixed_noise).reshape(-1, 1, 28, 28)
@@ -135,7 +132,9 @@ for epoch in range(num_epochs):
 
                 img_grid_fake = torchvision.utils.make_grid(fake, normalize=True, nrow=8)
                 img_grid_real = torchvision.utils.make_grid(real_img, normalize=True, nrow=8)
-                comparison_grid = torch.cat((img_grid_real, img_grid_fake), dim=1)  # stack vertically
+                comparison_grid = torch.cat(
+                    (img_grid_real, img_grid_fake), dim=1
+                )  # stack vertically
 
                 writer_fake.add_image("Fake Images", img_grid_fake, global_step=step)
                 writer_real.add_image("Real Images", img_grid_real, global_step=step)

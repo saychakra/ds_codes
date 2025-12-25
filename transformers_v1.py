@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 
-class InputEmbedding():
+class InputEmbedding:
     def __init__(self, d_model: int, vocab_size: int) -> None:
         super().__init__()
         self.d_model = d_model
@@ -13,6 +13,7 @@ class InputEmbedding():
 
     def forward(self, x):
         return self.embeddings(x) * math.sqrt(self.d_model)
+
 
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model: int, seq_len: int, dropout):
@@ -38,24 +39,27 @@ class PositionalEncoding(nn.Module):
         pe = pe.unsqueeze(0)
 
         ## register on buffer
-        self.register('pe', pe)
+        self.register("pe", pe)
 
     def forward(self, x):
-        x = x + (self.pe[:, x.shape[1], :]).requires_grad_(False) # because we don't want the model to learn the positional encoding and it will always be constant
+        x = (
+            x + (self.pe[:, x.shape[1], :]).requires_grad_(False)
+        )  # because we don't want the model to learn the positional encoding and it will always be constant
         return self.dropout(x)
 
 
 class LayerNormalization(nn.Module):
     def __init__(self, eps: float = 10e-6) -> None:
         self.eps = eps
-        self.alpha = nn.Parameter(torch.ones(1)) # additive parameter
-        self.bias = nn.Parameter(torch.zeros(1)) # multiplicative parameter
+        self.alpha = nn.Parameter(torch.ones(1))  # additive parameter
+        self.bias = nn.Parameter(torch.zeros(1))  # multiplicative parameter
 
     def forwards(self, x):
-        mean = x.mean(dim = -1, keepdim=True)
-        std = x.std(dim = -1, keepdim=True)
+        mean = x.mean(dim=-1, keepdim=True)
+        std = x.std(dim=-1, keepdim=True)
 
         return self.alpha * (x - mean) / (std + self.eps) + self.bias
+
 
 class FeedForwardBlock(nn.Module):
     def __init__(self, d_model: int, d_ff: int, dropout: float):
@@ -66,6 +70,7 @@ class FeedForwardBlock(nn.Module):
 
     def forward(self, x):
         return self.linear_2(self.dropout(torch.relu(self.linear_1(x))))
+
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model: int, h: int, dropout: float):
@@ -81,7 +86,9 @@ class MultiHeadAttention(nn.Module):
         self.w_k = nn.Linear(d_model, d_model)
         self.w_v = nn.Linear(d_model, d_model)
 
-        self.w_o = nn.Linear(d_model, d_model) ## after certain calculations its eventually gonna be nn.Linear(d_model, d_model) only!
+        self.w_o = nn.Linear(
+            d_model, d_model
+        )  ## after certain calculations its eventually gonna be nn.Linear(d_model, d_model) only!
 
     def forward(self, q, k, v, mask):
         query = self.w_q(q)
@@ -92,5 +99,3 @@ class MultiHeadAttention(nn.Module):
         query = query.view(query.shape[0], query.shape[1], self.h, self.d_k).transpose(1, 2)
         key = key.view(key.shape[0], key.shape[1], self.h, self.d_k).transpose(1, 2)
         value = value.view(value.shape[0], value.shape[1], self.h, self.d_k).transpose(1, 2)
-
-

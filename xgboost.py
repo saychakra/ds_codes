@@ -1,4 +1,3 @@
-
 import numpy as np
 
 
@@ -20,6 +19,7 @@ class XGBoostTree:
 
     def _calculate_gain(self, g, h, g_l, h_l, g_r, h_r, lambda_=1.0):
         """Calculate gain for split using the XGBoost formula"""
+
         def calc_term(g_sum, h_sum):
             return (g_sum * g_sum) / (h_sum + lambda_)
 
@@ -59,8 +59,7 @@ class XGBoostTree:
                 h_left += sorted_h[i]
 
                 # Skip if this split doesn't satisfy minimum child weight
-                if h_left < self.min_child_weight or \
-                   (total_h - h_left) < self.min_child_weight:
+                if h_left < self.min_child_weight or (total_h - h_left) < self.min_child_weight:
                     continue
 
                 # Skip duplicate values
@@ -70,8 +69,7 @@ class XGBoostTree:
                 g_right = total_g - g_left
                 h_right = total_h - h_left
 
-                gain = self._calculate_gain(total_g, total_h, g_left, h_left,
-                                         g_right, h_right)
+                gain = self._calculate_gain(total_g, total_h, g_left, h_left, g_right, h_right)
 
                 if gain > best_gain:
                     best_gain = gain
@@ -118,9 +116,16 @@ class XGBoostTree:
             return self._predict_sample(x, node.left)
         return self._predict_sample(x, node.right)
 
+
 class XGBoost:
-    def __init__(self, n_estimators=100, max_depth=3, learning_rate=0.1,
-                 min_samples_split=2, min_child_weight=1):
+    def __init__(
+        self,
+        n_estimators=100,
+        max_depth=3,
+        learning_rate=0.1,
+        min_samples_split=2,
+        min_child_weight=1,
+    ):
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.learning_rate = learning_rate
@@ -160,7 +165,7 @@ class XGBoost:
                 max_depth=self.max_depth,
                 min_samples_split=self.min_samples_split,
                 learning_rate=self.learning_rate,
-                min_child_weight=self.min_child_weight
+                min_child_weight=self.min_child_weight,
             )
             tree.fit(X, gradients, hessians)
 
@@ -190,6 +195,7 @@ class XGBoost:
         probabilities = self.predict_proba(X)
         return (probabilities >= threshold).astype(int)
 
+
 # Example usage
 def example_usage():
     # Generate sample data
@@ -199,11 +205,7 @@ def example_usage():
 
     # Create and train model
     model = XGBoost(
-        n_estimators=50,
-        max_depth=3,
-        learning_rate=0.1,
-        min_samples_split=2,
-        min_child_weight=1
+        n_estimators=50, max_depth=3, learning_rate=0.1, min_samples_split=2, min_child_weight=1
     )
     model.fit(X, y)
 
@@ -213,6 +215,7 @@ def example_usage():
     # Calculate accuracy
     accuracy = np.mean(y_pred == y)
     print(f"Accuracy: {accuracy:.4f}")
+
 
 if __name__ == "__main__":
     example_usage()

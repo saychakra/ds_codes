@@ -4,6 +4,7 @@ class TreeNode:
         self.left = left
         self.right = right
 
+
 def tree_height(root):
     if root is None:
         return 0
@@ -11,6 +12,7 @@ def tree_height(root):
         left_height = tree_height(root.left)
         right_height = tree_height(root.right)
         return max(left_height, right_height) + 1
+
 
 root = TreeNode(1)
 root.left = TreeNode(2)

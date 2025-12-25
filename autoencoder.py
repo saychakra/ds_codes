@@ -77,7 +77,7 @@ class Autoencoder:
 
             # Mini-batch training
             for i in range(0, m, batch_size):
-                batch = X_shuffled[i:min(i + batch_size, m)]
+                batch = X_shuffled[i : min(i + batch_size, m)]
 
                 # Forward pass
                 _, reconstruction = self.forward(batch)
@@ -109,6 +109,7 @@ class Autoencoder:
         """Get full reconstruction"""
         _, reconstruction = self.forward(X)
         return reconstruction
+
 
 # Example usage
 if __name__ == "__main__":

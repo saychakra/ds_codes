@@ -30,7 +30,9 @@ class GaussianMixture:
 
         # Calculate responsibilities
         for k in range(self.n_components):
-            responsibilities[:, k] = self.weights[k] * self.gaussian_pdf(X, self.means[k], self.covs[k])
+            responsibilities[:, k] = self.weights[k] * self.gaussian_pdf(
+                X, self.means[k], self.covs[k]
+            )
 
         # Normalize responsibilities
         responsibilities /= responsibilities.sum(axis=1, keepdims=True)
@@ -66,7 +68,9 @@ class GaussianMixture:
             # Compute log likelihood
             log_likelihood = 0
             for k in range(self.n_components):
-                log_likelihood += self.weights[k] * self.gaussian_pdf(X, self.means[k], self.covs[k])
+                log_likelihood += self.weights[k] * self.gaussian_pdf(
+                    X, self.means[k], self.covs[k]
+                )
             log_likelihood = np.sum(np.log(log_likelihood))
 
             # Check convergence
@@ -79,6 +83,7 @@ class GaussianMixture:
         responsibilities = self.e_step(X)
         return np.argmax(responsibilities, axis=1)
 
+
 # Example usage
 if __name__ == "__main__":
     # Generate sample data
@@ -86,9 +91,9 @@ if __name__ == "__main__":
     n_samples = 300
 
     # Generate three clusters
-    cluster1 = np.random.normal(0, 1, (n_samples//3, 2))
-    cluster2 = np.random.normal(4, 1.5, (n_samples//3, 2))
-    cluster3 = np.random.normal(-3, 1, (n_samples//3, 2))
+    cluster1 = np.random.normal(0, 1, (n_samples // 3, 2))
+    cluster2 = np.random.normal(4, 1.5, (n_samples // 3, 2))
+    cluster3 = np.random.normal(-3, 1, (n_samples // 3, 2))
 
     X = np.vstack([cluster1, cluster2, cluster3])
 

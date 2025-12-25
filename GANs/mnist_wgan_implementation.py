@@ -26,6 +26,7 @@ class Critic(nn.Module):
     def forward(self, x):
         return self.model(x)
 
+
 ######################################################## Generator ########################################################
 class Generator(nn.Module):
     def __init__(self, z_dim, img_dim):
@@ -47,6 +48,7 @@ class Generator(nn.Module):
     def forward(self, x):
         return self.gen(x)
 
+
 ##################################################### Weight Initialization #################################################
 def initialize_weights(model):
     for m in model.modules():
@@ -54,6 +56,7 @@ def initialize_weights(model):
             nn.init.xavier_uniform_(m.weight)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
+
 
 ######################################################## Hyperparameters ########################################################
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -74,10 +77,7 @@ initialize_weights(gen)
 fixed_noise = torch.randn((batch_size, z_dim)).to(device)
 
 # Data
-transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.5,), (0.5,))
-])
+transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
 dataset = datasets.MNIST(root="dataset/", transform=transform, download=True)
 loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
