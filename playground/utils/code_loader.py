@@ -2,7 +2,6 @@
 Utility to load and organize code files from the workspace
 """
 import os
-import json
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -20,14 +19,14 @@ def get_code_structure() -> Dict:
         'files': [],
         'folders': {}
     }
-    
+
     for item in sorted(os.listdir(WORKSPACE_ROOT)):
         # Skip ignored items
         if item in IGNORE_DIRS or item in IGNORE_FILES:
             continue
-            
+
         item_path = WORKSPACE_ROOT / item
-        
+
         if item_path.is_file():
             if item.endswith(('.py', '.ipynb')):
                 structure['files'].append({
@@ -39,7 +38,7 @@ def get_code_structure() -> Dict:
             subfolder_structure = _scan_folder(item_path)
             if subfolder_structure['files'] or subfolder_structure['folders']:
                 structure['folders'][item] = subfolder_structure
-    
+
     return structure
 
 
@@ -49,14 +48,14 @@ def _scan_folder(folder_path: Path) -> Dict:
         'files': [],
         'folders': {}
     }
-    
+
     try:
         for item in sorted(os.listdir(folder_path)):
             if item in IGNORE_DIRS or item in IGNORE_FILES:
                 continue
-                
+
             item_path = folder_path / item
-            
+
             if item_path.is_file():
                 if item.endswith(('.py', '.ipynb')):
                     structure['files'].append({
@@ -70,7 +69,7 @@ def _scan_folder(folder_path: Path) -> Dict:
                     structure['folders'][item] = subfolder
     except PermissionError:
         pass
-    
+
     return structure
 
 
@@ -80,17 +79,17 @@ def flatten_structure(structure: Dict, prefix: str = "") -> List[Tuple[str, Dict
     Useful for dropdown/selection menus
     """
     items = []
-    
+
     # Add files from current level
     for file_info in structure['files']:
         display_name = f"{prefix}{file_info['name']}"
         items.append((display_name, file_info))
-    
+
     # Add files from subfolders
     for folder_name, subfolder in structure['folders'].items():
         new_prefix = f"{prefix}{folder_name}/"
         items.extend(flatten_structure(subfolder, new_prefix))
-    
+
     return items
 
 
@@ -126,7 +125,7 @@ def get_summary_from_docstring(content: str) -> str:
     lines = content.split('\n')
     in_docstring = False
     docstring_lines = []
-    
+
     for line in lines[:50]:  # Check first 50 lines
         if '"""' in line or "'''" in line:
             if not in_docstring:
@@ -138,5 +137,5 @@ def get_summary_from_docstring(content: str) -> str:
                 break
         elif in_docstring:
             docstring_lines.append(line)
-    
+
     return '\n'.join(docstring_lines).strip()
