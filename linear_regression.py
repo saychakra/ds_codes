@@ -4,8 +4,8 @@ import numpy as np
 class LinearRegression:
     def __init__(self, learning_rate=0.01):
         self.learning_rate = learning_rate
-        self.weights = None
-        self.bias = None
+        self.weights = 0.0
+        self.bias = 0.0
 
     def fit(self, X, y, epochs=1000):
         # Initialize parameters
