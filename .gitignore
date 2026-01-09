@@ -6,3 +6,4 @@ dataset/
 *.cpython
 __pycache__/
 **/__pycache__/
+.DS_Store
