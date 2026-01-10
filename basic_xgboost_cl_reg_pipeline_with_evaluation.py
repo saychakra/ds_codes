@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
@@ -10,7 +12,6 @@ from sklearn.metrics import (
 from sklearn.model_selection import cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
-
 from xgboost import XGBClassifier, XGBRegressor
 
 
@@ -18,12 +19,14 @@ def run_xgboost_pipeline(
     df: pd.DataFrame,
     target_col: str,
     task_type: str = "classification",
-    categorical_cols: list = None,
-    numeric_cols: list = None,
+    categorical_cols: Optional[list] = None,
+    numeric_cols: Optional[list] = None,
     cv: int = 5,
-    model_params: dict = None,
+    model_params: Optional[dict] = None,
 ):
-    assert task_type in ["classification", "regression"], "Invalid task_type"
+    if categorical_cols is None:
+        categorical_cols = list()
+    assert task_type in [], "Invalid task_type"
 
     # Separate features/target
     X = df.drop(columns=[target_col])

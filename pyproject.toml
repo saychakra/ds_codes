@@ -18,5 +18,5 @@ dependencies = [
     "tensorflow>=2.20.0",
     "torch>=2.9.1",
     "torchvision>=0.24.1",
-    "xgboost>=3.1.2",
+    "xgboost>=3.1.3",
 ]
