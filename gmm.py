@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import multivariate_normal
 
@@ -83,6 +84,40 @@ class GaussianMixture:
         responsibilities = self.e_step(X)
         return np.argmax(responsibilities, axis=1)
 
+    def plot_clusters(self, X, gmm, ax=None):
+        """
+        Plot GMM clusters for 2D data.
+        """
+        if X.shape[1] != 2:
+            raise ValueError("plot_clusters only supports 2D data")
+
+        labels = gmm.predict(X)
+
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(6, 6))
+
+        # Plot points
+        for k in range(gmm.n_components):
+            mask = labels == k
+            ax.scatter(X[mask, 0], X[mask, 1], s=20, alpha=0.6, label=f"Cluster {k}")
+
+        # Plot means
+        ax.scatter(
+            gmm.means[:, 0],
+            gmm.means[:, 1],
+            c="black",
+            s=150,
+            marker="x",
+            linewidths=3,
+            label="Means",
+        )
+
+        ax.set_title("Gaussian Mixture Model Clusters")
+        ax.legend()
+        ax.grid(True)
+
+        return ax
+
 
 # Example usage
 if __name__ == "__main__":
@@ -104,3 +139,9 @@ if __name__ == "__main__":
     # Get cluster assignments
     labels = gmm.predict(X)
     print("Cluster centers:", gmm.means)
+
+    # Plotting the clusters (through soft-assignment)
+    resp = gmm.e_step(X)
+    colors = resp.argmax(axis=1)
+    plt.scatter(X[:, 0], X[:, 1], c=colors, s=20, alpha=0.6)
+    plt.show()
